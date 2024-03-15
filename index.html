@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Interactivo de Argentina</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="icon" href="icono.png" type="image/png">
+    <style>
+        body {
+            overflow: hidden; /* Ocultar el desplazamiento vertical */
+        }
+
+        #map {
+            height: 100vh;
+            width: 100%;
+            background-color: #f8f9fa;
+        }
+
+        .title {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+            font-size: 36px;
+            background-color: #007bff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">Mapa Interactivo de Argentina</h1>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([-38.4161, -63.6167], 4);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var provincesData = {
+            "Buenos Aires": { capital: "La Plata", superficie: "307,571 km²", poblacion: "17,241,000" },
+            "Catamarca": { capital: "San Fernando del Valle de Catamarca", superficie: "102,602 km²", poblacion: "367,828" },
+            "Chaco": { capital: "Resistencia", superficie: "99,633 km²", poblacion: "1,053,466" },
+            "Chubut": { capital: "Rawson", superficie: "224,686 km²", poblacion: "509,108" },
+            "Córdoba": { capital: "Córdoba", superficie: "165,321 km²", poblacion: "3,308,876" },
+            "Corrientes": { capital: "Corrientes", superficie: "88,199 km²", poblacion: "1,112,146" },
+            "Entre Ríos": { capital: "Paraná", superficie: "78,781 km²", poblacion: "1,235,994" },
+            "Formosa": { capital: "Formosa", superficie: "72,066 km²", poblacion: "527,895" },
+            "Jujuy": { capital: "San Salvador de Jujuy", superficie: "53,219 km²", poblacion: "673,307" },
+            "La Pampa": { capital: "Santa Rosa", superficie: "143,440 km²", poblacion: "318,951" },
+            "La Rioja": { capital: "La Rioja", superficie: "89,680 km²", poblacion: "331,847" },
+            "Mendoza": { capital: "Mendoza", superficie: "148,827 km²", poblacion: "1,741,610" },
+            "Misiones": { capital: "Posadas", superficie: "29,801 km²", poblacion: "1,101,593" },
+            "Neuquén": { capital: "Neuquén", superficie: "94,078 km²", poblacion: "551,266" },
+            "Río Negro": { capital: "Viedma", superficie: "203,013 km²", poblacion: "638,645" },
+            "Salta": { capital: "Salta", superficie: "155,488 km²", poblacion: "1,335,650" },
+            "San Juan": { capital: "San Juan", superficie: "89,651 km²", poblacion: "681,055" },
+            "San Luis": { capital: "San Luis", superficie: "76,748 km²", poblacion: "431,588" },
+            "Santa Cruz": { capital: "Río Gallegos", superficie: "243,943 km²", poblacion: "273,964" },
+            "Santa Fe": { capital: "Santa Fe", superficie: "133,007 km²", poblacion: "3,194,537" },
+            "Santiago del Estero": { capital: "Santiago del Estero", superficie: "136,351 km²", poblacion: "896,461" },
+            "Tierra del Fuego, Antártida e Islas del Atlántico Sur": { capital: "Ushuaia", superficie: "21,263 km²", poblacion: "127,205" },
+            "Tucumán": { capital: "San Miguel de Tucumán", superficie: "22,524 km²", poblacion: "1,448,188" }
+        };
+
+        var provinces = [
+            { name: 'Buenos Aires', lat: -34.6050, lon: -58.3826 },
+            { name: 'Catamarca', lat: -28.4696, lon: -65.7852 },
+            { name: 'Chaco', lat: -26.8388, lon: -60.4659 },
+            { name: 'Chubut', lat: -43.2934, lon: -65.1073 },
+            { name: 'Córdoba', lat: -31.4201, lon: -64.1888 },
+            { name: 'Corrientes', lat: -27.4691, lon: -58.8309 },
+            { name: 'Entre Ríos', lat: -32.0575, lon: -59.2480 },
+            { name: 'Formosa', lat: -26.1865, lon: -58.1730 },
+            { name: 'Jujuy', lat: -24.1858, lon: -65.2995 },
+            { name: 'La Pampa', lat: -36.6167, lon: -64.2833 },
+            { name: 'La Rioja', lat: -29.4131, lon: -66.8566 },
+            { name: 'Mendoza', lat: -32.8908, lon: -68.8272 },
+            { name: 'Misiones', lat: -27.3621, lon: -55.9009 },
+            { name: 'Neuquén', lat: -38.9526, lon: -68.0607 },
+            { name: 'Río Negro', lat: -40.8128, lon: -63.0000 },
+            { name: 'Salta', lat: -24.7859, lon: -65.4117 },
+            { name: 'San Juan', lat: -31.5375, lon: -68.5364 },
+            { name: 'San Luis', lat: -33.3022, lon: -66.3378 },
+            { name: 'Santa Cruz', lat: -51.6226, lon: -69.2181 },
+            { name: 'Santa Fe', lat: -31.6333, lon: -60.7000 },
+            { name: 'Santiago del Estero', lat: -27.7828, lon: -64.2642 },
+            { name: 'Tierra del Fuego', lat: -54.8069, lon: -68.3088 },
+            { name: 'Tucumán', lat: -26.8241, lon: -65.2226 }
+        ];
+
+        provinces.forEach(province => {
+            var marker = L.marker([province.lat, province.lon]).addTo(map);
+            marker.bindPopup(getPopupContent(province.name));
+        });
+
+        function getPopupContent(provinceName) {
+            var provinceInfo = provincesData[provinceName];
+            var content = '<b>' + provinceName + '</b><br>';
+            if (provinceInfo) {
+                content += 'Capital: ' + provinceInfo.capital + '<br>';
+                content += 'Superficie: ' + provinceInfo.superficie + '<br>';
+                content += 'Población: ' + provinceInfo.poblacion;
+            } else {
+                content += 'No disponible';
+            }
+            return content;
+        }
+    </script>
+</body>
+</html>
+
