@@ -9,7 +9,7 @@
     <link rel="icon" href="icono.png" type="image/png">
     <style>
         body {
-            overflow: hidden; /* Ocultar el desplazamiento vertical */
+            overflow: hidden; 
         }
 
         #map {
@@ -41,7 +41,6 @@
         var map = L.map('map').setView([-38.4161, -63.6167], 4);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
         var provincesData = {
