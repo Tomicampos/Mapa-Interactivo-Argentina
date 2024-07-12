@@ -17,8 +17,9 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         run: |
-          echo "$KUBE_CONFIG_DATA" > kubeconfig
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
           export KUBECONFIG=$(pwd)/kubeconfig
+          kubectl config view
 
       - name: Build and push Docker image
         env:
@@ -30,7 +31,5 @@ jobs:
           docker push tomicampos22/mapainteractivo:latest
 
       - name: Deploy to Kubernetes
-        env:
-          KUBECONFIG: $(pwd)/kubeconfig
         run: |
           kubectl apply -f deployment.yaml --validate=false
