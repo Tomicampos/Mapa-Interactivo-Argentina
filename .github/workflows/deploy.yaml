@@ -17,17 +17,16 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         run: |
-          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
-          export KUBECONFIG=$(pwd)/kubeconfig
-          kubectl config view
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig.yaml
+          kubectl config view --kubeconfig=kubeconfig.yaml
 
       - name: Debug kubeconfig
         run: |
-          cat kubeconfig
+          cat kubeconfig.yaml
 
       - name: Verify connectivity
         run: |
-          kubectl get nodes
+          kubectl get nodes --kubeconfig=kubeconfig.yaml
 
       - name: Build and push Docker image
         env:
@@ -35,7 +34,7 @@ jobs:
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
           docker build -t tomicampos22/mapainteractivo:latest .
-          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+          echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
           docker push tomicampos22/mapainteractivo:latest
 
       - name: Create namespace if not exists
@@ -44,4 +43,4 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f deployment.yaml --namespace=mundose --validate=false
+          kubectl apply -f deployment.yaml --namespace=mundose --validate=false --kubeconfig=kubeconfig.yaml
