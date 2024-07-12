@@ -30,6 +30,10 @@ jobs:
           docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
           docker push tomicampos22/mapainteractivo:latest
 
+      - name: Create namespace if not exists
+        run: |
+          kubectl create namespace mundose || true
+
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f deployment.yaml --validate=false
+          kubectl apply -f deployment.yaml --namespace=mundose --validate=false
