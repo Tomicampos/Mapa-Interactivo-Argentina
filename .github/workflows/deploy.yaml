@@ -30,5 +30,7 @@ jobs:
           docker push tomicampos22/mapainteractivo:latest
 
       - name: Deploy to Kubernetes
+        env:
+          KUBECONFIG: $(pwd)/kubeconfig
         run: |
           kubectl apply -f deployment.yaml --validate=false
