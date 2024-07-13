@@ -13,12 +13,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
       - name: Configure kubectl
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         run: |
           echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig.yaml
-          kubectl config view --kubeconfig=kubeconfig.yaml
+          export KUBECONFIG=$(pwd)/kubeconfig.yaml
+          kubectl config view
 
       - name: Debug kubeconfig
         run: |
@@ -34,13 +42,13 @@ jobs:
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
         run: |
           docker build -t tomicampos22/mapainteractivo:latest .
-          echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
           docker push tomicampos22/mapainteractivo:latest
 
       - name: Create namespace if not exists
         run: |
-          kubectl create namespace mundose || true
+          kubectl create namespace mundose || true --kubeconfig=kubeconfig.yaml
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f deployment.yaml --namespace=mundose --validate=false --kubeconfig=kubeconfig.yaml
+          kubectl apply -f deployment.yaml --namespace=mundose --kubeconfig=kubeconfig.yaml --validate=false
