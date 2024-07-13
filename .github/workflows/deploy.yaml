@@ -30,6 +30,7 @@ jobs:
 
       - name: Debug kubeconfig
         run: |
+          echo "deguggueando kubeconfig.yaml...."
           cat kubeconfig.yaml
 
       - name: Verify connectivity
